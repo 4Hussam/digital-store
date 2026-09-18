@@ -294,6 +294,7 @@ tbody tr:hover { background:var(--bg3); }
 .form-row input:focus, .form-row textarea:focus, .form-row select:focus { border-color:var(--accent); }
 .form-row-check { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:16px; font-size:14px; }
 .form-row-check label { display:flex; align-items:center; gap:8px; cursor:pointer; }
+.field-hint { display:block; margin-top:6px; color:var(--muted); font-size:12px; }
 .form-row input[type="checkbox"] { width:auto; accent-color:var(--accent); transform:scale(1.15); }
 .form-row input[type="color"] { height:46px; padding:4px; cursor:pointer; width:80px; }
 .form-row input[type="file"] { padding:8px; }
@@ -369,6 +370,24 @@ html[dir="rtl"] .cart-drawer { transform:translateX(130%); }
 .checkout-item small { color:var(--muted); }
 .checkout-total { background:var(--bg3); border-radius:12px; padding:14px; }
 .checkout-total strong { font-size:20px; }
+
+/* ---------- Success ---------- */
+.success-check {
+  width:64px; height:64px; margin:0 auto 16px; border-radius:50%;
+  background:linear-gradient(135deg,var(--success),#55efc4);
+  display:grid; place-items:center; font-size:28px; color:#fff;
+  box-shadow:0 10px 30px rgba(0,184,148,.4); animation:popIn .4s ease;
+}
+@keyframes popIn { 0% { transform:scale(0); } 70% { transform:scale(1.15); } 100% { transform:scale(1); } }
+.success-sub { color:var(--muted); margin-bottom:16px; }
+.success-order {
+  background:var(--bg3); border:1px solid var(--border); border-radius:14px;
+  padding:16px; margin-bottom:18px; text-align:start;
+}
+.success-order ul { padding-inline-start:20px; color:var(--muted); font-size:14px; margin:8px 0; }
+.success-order strong { display:block; }
+.success-order span { color:var(--accent2); font-weight:700; }
+.success-note { color:var(--muted); font-size:13.5px; }
 
 /* ---------- Guide ---------- */
 .guide-box { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:28px; max-width:760px; }

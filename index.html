@@ -267,12 +267,23 @@
             <input type="text" id="setWhatsapp" placeholder="+9627XXXXXXXX — يستقبل إشعارات الطلبات">
           </div>
           <div class="form-row">
+            <label>تيليجرام — رمز البوت (Bot Token) — الإشعار التلقائي لكل طلب</label>
+            <input type="text" id="setTelegramBotToken" placeholder="1234567890:AAH... — أنشئه مجاناً من @BotFather">
+          </div>
+          <div class="form-row">
+            <label>تيليجرام — رقم الدردشة (Chat ID) — مكان استقبال إشعارات الطلبات</label>
+            <input type="text" id="setTelegramChatId" placeholder="احصل عليه من @userinfobot أو أضف بوتك لمجموعة وخذ ID المجموعة">
+          </div>
+          <div class="form-row">
             <label>رمز الحماية (تغيير كلمة سر لوحة التحكم)</label>
             <input type="text" id="setAdminPin" placeholder="رمز جديد (استخدم أرقام أو حروف)">
           </div>
           <div class="form-row">
             <label>رابط صفحة الدفع الخاص بك (Stripe Payment Link)</label>
             <input type="text" id="setPaymentLink" placeholder="https://buy.stripe.com/... — يُفتح عند إتمام الطلب">
+          </div>
+          <div class="form-row-check">
+            <button type="button" class="btn btn-ghost" onclick="testTelegram()"><i class="fa-brands fa-telegram"></i> إرسال طلب تجريبي لتيليجرام</button>
           </div>
           <button type="submit" class="btn btn-primary">حفظ الإعدادات</button>
         </form>
@@ -284,10 +295,11 @@
           <h3><i class="fa-solid fa-money-bill-trend-up"></i> كيف تحقق دخل من متجرك الرقمي</h3>
           <ol>
             <li><strong>اضبط المتجر:</strong> غيّر اسم المتجر والعملة وحتى رمز الحماية من تبويب «الإعدادات».</li>
-            <li><strong>أضف منتجات:</strong> من تبويب «المنتجات» أضف منتجاً رقمياً (قالب، دليل، ستور، بوت...) مع رابط بيعه.</li>
-            <li><strong>فعّل استلام الأموال:</strong> أنشئ <em>Stripe Payment Link</em> لبضعة دقائق مجاناً من <code>stripe.com</code> (أو أي بوابة دفع) وضعه في إعدادات الدفع أو داخل كل منتج.</li>
+            <li><strong>فعّل التنبيه التلقائي (يشتغل لحاله):</strong> أنشئ بوت مجاني من <code>@BotFather</code> في تيليجرام، خذ الرمز (Token) وضعه في «الإعدادات» مع معرف الدردشة (Chat ID) من <code>@userinfobot</code>، ثم اضغط «إرسال طلب تجريبي». من هاللحظة كل طلب يوصلك إشعار فوري بدون أي تدخل منك.</li>
+            <li><strong>أضف منتجاتك:</strong> من تبويب «المنتجات» أضف منتجاً رقمياً (قالب، دليل، ستور، بوت...) مع سعره، وارفع ملفه في مكان مجاني وضع <strong>رابط التحميل</strong> في المنتج — هكذا يصـل للعميل فوراً وتسليم ذاتي بالكامل.</li>
+            <li><strong>فعّل استلام الأموال:</strong> أنشئ <em>Stripe Payment Link</em> لبضعة دقائق مجاناً من <code>stripe.com</code> (أو PayPal.me) وضعه في إعدادات الدفع أو داخل كل منتج — الأموال تنزل مباشرة لحسابك.</li>
             <li><strong>أو استقبل عبر واتساب:</strong> ضع رقمك في الإعدادات ليصلك طلب كل عميل مباشرة وتسلّمه بنفسك.</li>
-            <li><strong>انشر المتجر:</strong> ارفع المجلد على GitHub Pages أو Vercel مجاناً وانشر رابطك على وسائل التواصل.</li>
+            <li><strong>انشر المتجر:</strong> متجرك شغّال الآن على الرابط — انشره على وسائل التواصل واطلب من العملاء الشراء مباشرة.</li>
           </ol>
           <div class="guide-note">
             <i class="fa-solid fa-lightbulb"></i>
@@ -338,6 +350,11 @@
           <div class="form-row">
             <label>رابط الدفع لهذا المنتج (Stripe/PayPal)</label>
             <input type="text" id="pfPayLink" placeholder="اتركه فارغاً لاستخدام رابط الدفع العام">
+          </div>
+          <div class="form-row">
+            <label>رابط تحميل المنتج (يظهر للعميل فور إتمام الطلب — تسليم ذاتي يشغل نفسه)</label>
+            <input type="text" id="pfFileUrl" placeholder="https://... ملف المنتج (Drive/Dropbox/مباشر)">
+            <small class="field-hint"><i class="fa-solid fa-lightbulb"></i> ارفع ملفك في مكان مجاني وضع الرابط هنا ليصـل المنتج للعميل فوراً بدون تدخل منك.</small>
           </div>
           <div class="form-row-check">
             <label><input type="checkbox" id="pfFeatured" checked> منتج مميز (يظهر في الرئيسية)</label>
@@ -423,6 +440,14 @@
 
 <!-- Toast -->
 <div id="toast" class="toast"></div>
+
+<!-- Success modal -->
+<div id="successModal" class="modal-overlay" style="display:none">
+  <div class="modal product-preview">
+    <button class="modal-close" onclick="closeSuccessModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div id="successBody"></div>
+  </div>
+</div>
 
 <script src="js/store.js"></script>
 <script src="js/app.js"></script>

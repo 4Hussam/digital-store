@@ -280,12 +280,32 @@ function completeOrder(e) {
     window.open('https://wa.me/' + s.whatsapp.replace(/\D/g, '') + '?text=' + msg, '_blank');
   }
 
+  sendTelegramOrder(order);
+
   const payLink = pickPaymentLink(items);
   if (payLink) {
     window.open(payLink, '_blank');
   }
 
+  const p = getProducts().find(x => x.id === items[0].id);
+  showSuccessModal(order, p && p.fileUrl ? p.fileUrl : '');
+
   showToast('تم استلام طلبك بنجاح! <i class="fa-solid fa-circle-check"></i>', 'success');
+}
+
+function sendTelegramOrder(order) {
+  const s = getSettings();
+  const token = (s.telegramBotToken || '').trim();
+  const chat = (s.telegramChatId || '').trim();
+  if (!token || !chat) return;
+  const itemsText = order.items.map(i => `• ${i.product} × ${i.qty} — ${i.price}${s.currency}`).join('\n');
+  const text = `🛒 *طلب جديد في متجر ${s.storeName}*\n━━━━━━━━━━━━━━\n🆔 رقم الطلب: ${order.id}\n👤 الاسم: ${order.name}\n📧 البريد: ${order.email}\n📱 الهاتف: ${order.phone || '—'}\n\n📦 *المنتجات:*\n${itemsText}\n\n💰 *الإجمالي: ${order.total}${s.currency}*\n📅 ${new Date().toLocaleString('ar')}\n━━━━━━━━━━━━━━\n✅ يُرجى تسليم المنتج وتأكيد استلام الدفع.`;
+  const payload = { chat_id: chat, text, parse_mode: 'Markdown' };
+  fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
 }
 
 function pickPaymentLink(items) {
@@ -313,6 +333,30 @@ function showToast(msg, type) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ---------- Success screen ---------- */
+function showSuccessModal(order, fileUrl) {
+  const s = getSettings();
+  const itemsList = order.items.map(it => `<li>${escapeHTML(it.product)} × ${it.qty}</li>`).join('');
+  const fileBlock = fileUrl
+    ? `<a class="btn btn-primary" href="${fileUrl}" target="_blank" rel="noopener"><i class="fa-solid fa-download"></i> تحميل منتجك الآن</a>`
+    : '<p class="success-note">استلمنا طلبك، سيصلك المنتج على بريدك الإلكتروني خلال دقائق.</p>';
+  document.getElementById('successBody').innerHTML = `
+    <div class="success-check"><i class="fa-solid fa-check"></i></div>
+    <h3>تم استلام طلبك بنجاح!</h3>
+    <p class="success-sub">شكراً لثقتك بـ متجر ${s.storeName}</p>
+    <div class="success-order">
+      <strong>رقم الطلب: ${escapeHTML(order.id)}</strong>
+      <ul>${itemsList}</ul>
+      <span>الإجمالي: ${formatMoney(order.total, s.currency)}</span>
+    </div>
+    ${fileBlock}`;
+  document.getElementById('successModal').style.display = 'flex';
+}
+
+function closeSuccessModal() {
+  document.getElementById('successModal').style.display = 'none';
 }
 
 /* ---------- Utils ---------- */

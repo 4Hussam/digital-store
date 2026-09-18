@@ -101,6 +101,7 @@ function openProductModal(id) {
     document.getElementById('pfImageUrl').value = p.image || '';
     document.getElementById('pfColor').value = p.color || '#6c5ce7';
     document.getElementById('pfPayLink').value = p.payLink || '';
+    document.getElementById('pfFileUrl').value = p.fileUrl || '';
     document.getElementById('pfFeatured').checked = !!p.featured;
     document.getElementById('pfActive').checked = p.active !== false;
     d.style.display = 'inline-flex';
@@ -137,6 +138,7 @@ function saveProduct(e) {
     image: document.getElementById('pfImageUrl').value.trim(),
     color: document.getElementById('pfColor').value,
     payLink: document.getElementById('pfPayLink').value.trim(),
+    fileUrl: document.getElementById('pfFileUrl').value.trim(),
     featured: document.getElementById('pfFeatured').checked,
     active: document.getElementById('pfActive').checked
   };
@@ -260,8 +262,55 @@ function fillSettingsForm() {
   document.getElementById('setHeroSub').value = s.heroSub || '';
   document.getElementById('setCurrency').value = s.currency || '';
   document.getElementById('setWhatsapp').value = s.whatsapp || '';
+  document.getElementById('setTelegramBotToken').value = s.telegramBotToken || '';
+  document.getElementById('setTelegramChatId').value = s.telegramChatId || '';
   document.getElementById('setAdminPin').value = '';
   document.getElementById('setPaymentLink').value = s.paymentLink || '';
+}
+
+function readTelegramFields() {
+  return {
+    telegramBotToken: document.getElementById('setTelegramBotToken').value.trim(),
+    telegramChatId: document.getElementById('setTelegramChatId').value.trim()
+  };
+}
+
+function saveTelegramFields(s) {
+  const t = readTelegramFields();
+  s.telegramBotToken = t.telegramBotToken;
+  s.telegramChatId = t.telegramChatId;
+  return Object.assign({}, s, t);
+}
+
+async function testTelegram() {
+  const t = readTelegramFields();
+  if (!t.telegramBotToken || !t.telegramChatId) {
+    showToast('أدخل رمز البوت ومعرف الدردشة أولاً', 'error');
+    return;
+  }
+  const s = getSettings();
+  const text = `📢 *رسالة تجريبية من متجر ${s.storeName}*\nتهانينا! 🎉\nإشعارات الطلبات تعمل الآن تلقائياً.\nكل طلب جديد سيصل إليك هنا فوراً.`;
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جار الإرسال...';
+  try {
+    const res = await fetch('https://api.telegram.org/bot' + t.telegramBotToken + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: t.telegramChatId, text, parse_mode: 'Markdown' })
+    });
+    const json = await res.json();
+    if (json.ok) {
+      saveTelegramFields(getSettings());
+      showToast('وصلت الرسالة التجريبية لتطبيقك ✅', 'success');
+    } else {
+      showToast('خطأ: ' + (json.description || 'تحقق من الرمز والمعرف'), 'error');
+    }
+  } catch (e) {
+    showToast('لا يمكن الاتصال, تحقق من اتصالك', 'error');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-brands fa-telegram"></i> إرسال طلب تجريبي لتيليجرام';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -271,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const s = getSettings();
       const pinInput = document.getElementById('setAdminPin').value.trim();
+      const merged = saveTelegramFields(s);
       saveSettings({
         storeName: document.getElementById('setStoreName').value.trim() || 'الرقمي',
         tagline: document.getElementById('setTagline').value.trim(),
@@ -278,7 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currency: document.getElementById('setCurrency').value,
         whatsapp: document.getElementById('setWhatsapp').value.trim(),
         adminPin: pinInput || s.adminPin,
-        paymentLink: document.getElementById('setPaymentLink').value.trim()
+        paymentLink: document.getElementById('setPaymentLink').value.trim(),
+        telegramBotToken: merged.telegramBotToken,
+        telegramChatId: merged.telegramChatId
       });
       renderSettings();
       renderCartUI();

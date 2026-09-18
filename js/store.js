@@ -13,7 +13,9 @@ const DEFAULT_SETTINGS = {
   currency: '$',
   whatsapp: '',
   adminPin: '1234',
-  paymentLink: ''
+  paymentLink: '',
+  telegramBotToken: '',
+  telegramChatId: ''
 };
 
 const DEFAULT_PRODUCTS = [
