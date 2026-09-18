@@ -14,8 +14,8 @@ const DEFAULT_SETTINGS = {
   whatsapp: '',
   adminPin: '1234',
   paymentLink: '',
-  telegramBotToken: '',
-  telegramChatId: ''
+  telegramBotToken: '8640050360:AAFazOSTqUi80xTfsWYF6CHCqL871TQ4PkM',
+  telegramChatId: '7443219236'
 };
 
 const DEFAULT_PRODUCTS = [
