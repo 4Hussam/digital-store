@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سيرة ذاتية احترافية</title>
+<style>
+  :root { --main:#6c5ce7; --dark:#171b2b; --muted:#5b6478; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI', Tahoma, Arial, sans-serif; background:#eef0f5; color:#222; line-height:1.6; }
+  .page { max-width:900px; margin:28px auto; background:#fff; display:grid; grid-template-columns:280px 1fr; box-shadow:0 10px 40px rgba(0,0,0,.15); }
+  .side { background:var(--dark); color:#fff; padding:34px 24px; }
+  .side h1 { font-size:26px; margin-bottom:4px; }
+  .side .role { color:#a5b0ff; font-weight:600; font-size:14px; margin-bottom:22px; }
+  .side h3 { font-size:13px; color:#a5b0ff; margin:20px 0 10px; letter-spacing:1px; text-transform:uppercase; border-bottom:1px solid #2c3350; padding-bottom:6px; }
+  .side p, .side li { font-size:13px; color:#d6d9e3; }
+  .side ul { list-style:none; }
+  .side li { margin-bottom:7px; }
+  .side .contact li i { width:18px; display:inline-block; color:#a5b0ff; }
+  .side .skills span { display:inline-block; background:#2c3350; color:#fff; padding:4px 12px; border-radius:20px; font-size:11.5px; margin:3px; }
+  .main { padding:36px 40px; }
+  .main .section { margin-bottom:26px; }
+  .main h2 { font-size:16px; color:var(--main); margin-bottom:12px; border-bottom:2px solid #eee; padding-bottom:6px; }
+  .entry { margin-bottom:14px; }
+  .entry .top { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; }
+  .entry .top b { font-size:15px; }
+  .entry .top span { font-size:12px; color:var(--muted); }
+  .entry p { font-size:13px; color:#444; margin-top:3px; }
+  .avatar { width:130px; height:130px; border-radius:50%; margin:0 auto 20px; background:linear-gradient(135deg,var(--main),#8e7bff); display:grid; place-items:center; font-size:44px; font-weight:800; color:#fff; }
+  .print-tip { position:fixed; bottom:14px; inset-inline-end:14px; background:var(--main); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; box-shadow:0 6px 18px rgba(0,0,0,.25); z-index:9; }
+  @media print { body { background:#fff; } .page { box-shadow:none; margin:0; width:100%; } .print-tip { display:none; } }
+  @media (max-width:760px){ .page { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="print-tip">💡 للتصدير PDF: Ctrl+P ثم «حفظ كـ PDF»</div>
+
+<div class="page">
+  <aside class="side">
+    <div class="avatar">ا</div>
+    <h1>[اسمك الكامل]</h1>
+    <div class="role">المسمى الوظيفي / التخصص</div>
+
+    <h3>معلومات التواصل</h3>
+    <ul class="contact">
+      <li><i>📱</i> +962 7X XXX XXXX</li>
+      <li><i>✉️</i> you@email.com</li>
+      <li><i>📍</i> مدينتك، بلدك</li>
+      <li><i>🔗</i> linkedin.com/in/you</li>
+    </ul>
+
+    <h3>المهارات</h3>
+    <div class="skills">
+      <span>مهارة رئيسية 1</span><span>مهارة رئيسية 2</span><span>مهارة رئيسية 3</span>
+      <span>مهارة 4</span><span>مهارة 5</span><span>مهارة 6</span>
+    </div>
+
+    <h3>اللغات</h3>
+    <ul>
+      <li>العربية — (اللغة الأم)</li>
+      <li>الإنجليزية — (متقدم)</li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <div class="section">
+      <h2>الملخص الشخصي</h2>
+      <p>اكتب هنا جملتين إلى ثلاث جمل تصف خبرتك وقوتك وما تقدمه، بأسلوب احترافي وواضح. مثال: «خبرة أكثر من 5 سنوات في المبيعات والتسويق الرقمي مع سجل حافل بتحقيق الأهداف وقيادة الفرق.»</p>
+    </div>
+
+    <div class="section">
+      <h2>الخبرات العملية</h2>
+      <div class="entry">
+        <div class="top"><b>المسمى الوظيفي</b><span>من سنة — إلى سنة</span></div>
+        <div class="top"><span style="font-weight:600">اسم الشركة</span></div>
+        <p>• أبرز إنجاز/مسؤولية أولى. • إنجاز ثانٍ بأرقام محددة كلما أمكن. • إنجاز ثالث يظهر أثرك.</p>
+      </div>
+      <div class="entry">
+        <div class="top"><b>المسمى الوظيفي</b><span>من سنة — إلى سنة</span></div>
+        <div class="top"><span style="font-weight:600">اسم الشركة</span></div>
+        <p>• أبرز إنجاز/مسؤولية أولى. • إنجاز ثانٍ بأرقام محددة كلما أمكن.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>التعليم</h2>
+      <div class="entry">
+        <div class="top"><b>الشهادة الجامعية</b><span>سنة التخرج</span></div>
+        <div class="top"><span style="font-weight:600">اسم الجامعة</span></div>
+        <p>ملاحظات إضافية: مثال نسبة التخرج أو الجوائز.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>الشهادات والدورات</h2>
+      <div class="entry">
+        <div class="top"><b>اسم الشهادة</b><span>السنة</span></div>
+        <p>الجهة المانحة / المنصة.</p>
+      </div>
+      <div class="entry">
+        <div class="top"><b>اسم الشهادة</b><span>السنة</span></div>
+        <p>الجهة المانحة / المنصة.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>المراجع</h2>
+      <p>تُرسل عند الطلب.</p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

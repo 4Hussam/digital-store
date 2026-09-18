@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دفتر إدارة المال الشخصي</title>
+<style>
+  :root { --green:#00b894; --dark:#171b2b; --muted:#5b6478; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI', Tahoma, Arial, sans-serif; background:#eef0f5; color:#222; padding:24px; }
+  .wrap { max-width:980px; margin:0 auto; }
+  h1 { font-size:24px; text-align:center; margin-bottom:4px; }
+  .sub { text-align:center; color:var(--muted); margin-bottom:24px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:22px; }
+  .card { background:#fff; border-radius:14px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,.08); text-align:center; }
+  .card .big { font-size:26px; font-weight:800; }
+  .card .lbl { font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .balance.big { color:var(--green); }
+  .panel { background:#fff; border-radius:14px; padding:22px; box-shadow:0 4px 16px rgba(0,0,0,.08); margin-bottom:18px; }
+  .panel h2 { font-size:16px; margin-bottom:14px; border-inline-start:4px solid var(--green); padding-inline-start:10px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; }
+  input, select, button { padding:11px 14px; border:1px solid #ddd; border-radius:10px; font-size:14px; font-family:inherit; }
+  input:focus, select:focus { outline:none; border-color:var(--green); }
+  button { background:var(--green); color:#fff; border:none; font-weight:700; cursor:pointer; }
+  button.ghost { background:#eee; color:#333; }
+  .btn-danger { background:#e17055; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { color:var(--muted); font-size:12px; text-align:start; border-bottom:2px solid #eee; padding:8px; }
+  td { padding:10px 8px; border-bottom:1px solid #eee; }
+  tr:hover td { background:#fafbfd; }
+  .income { color:var(--green); font-weight:700; }
+  .expense { color:#e17055; font-weight:700; }
+  .sum { font-weight:700; }
+  .empty { text-align:center; color:#aaa; padding:24px; }
+  .print-tip { position:fixed; bottom:14px; inset-inline-end:14px; background:#171b2b; color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; box-shadow:0 6px 18px rgba(0,0,0,.25); }
+  .export { margin-top:10px; }
+  @media print { body { background:#fff; padding:0; } .panel { box-shadow:none; } .no-print { display:none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💼 دفتر إدارة المال الشخصي</h1>
+  <p class="sub">سجّل دخلك ومصاريفك وتابع ميزانيتك شهرياً — البيانات محفوظة على جهازك تلقائياً.</p>
+
+  <div class="cards">
+    <div class="card"><div class="big balance" id="cBalance">0</div><div class="lbl">الرصيد الحالي</div></div>
+    <div class="card"><div class="big" id="cIncome" style="color:var(--green)">0</div><div class="lbl">إجمالي الدخل</div></div>
+    <div class="card"><div class="big" id="cExpense" style="color:#e17055">0</div><div class="lbl">إجمالي المصاريف</div></div>
+    <div class="card"><div class="big" id="cCount">0</div><div class="lbl">عملية</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>اضافة عملية جديدة</h2>
+    <div class="row">
+      <select id="fType"><option value="income">دخل</option><option value="expense">مصروف</option></select>
+      <input type="text" id="fDesc" placeholder="الوصف (مثال: راتب، سوبر ماركت)">
+      <input type="number" id="fAmount" placeholder="المبلغ" min="0" step="0.01">
+      <input type="month" id="fMonth">
+      <button onclick="addTx()">إضافة</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>سجل العمليات</h2>
+    <div class="row no-print" style="margin-bottom:12px">
+      <select id="fFilterMonth" onchange="render()"><option value="">كل الشهور</option></select>
+      <button class="ghost" onclick="clearAll()" style="background:#e17055;color:#fff">مسح الكل</button>
+      <button class="ghost" onclick="window.print()">🖨 تصدير/طباعة PDF</button>
+    </div>
+    <table>
+      <thead><tr><th>التاريخ</th><th>النوع</th><th>الوصف</th><th>المبلغ</th><th>الشهر</th><th></th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="footRow"></div>
+    <div class="export"><button class="ghost" onclick="exportCSV()">⬇ تصدير CSV (Excel)</button></div>
+  </div>
+</div>
+
+<div class="print-tip">💡 للطباعة/PDF: اضغط الزر أو Ctrl+P</div>
+
+<script>
+(function(){
+  let data;
+  function load(){ try{ data = JSON.parse(localStorage.getItem('pft')||'[]'); }catch(e){ data=[]; }
+    if(!Array.isArray(data)) data=[]; }
+  function save(){ localStorage.setItem('pft', JSON.stringify(data)); }
+  var fmt = new Intl.NumberFormat('ar', {maximumFractionDigits:2});
+
+  function monthsList(){
+    var out=[], now=new Date();
+    for(var i=0;i<24;i++){ var d=new Date(now.getFullYear(), now.getMonth()-i, 1); out.push(d.toISOString().slice(0,7)); }
+    return out;
+  }
+  function monthLabel(m){ var p=m.split('-'); var names=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']; return names[+p[1]-1]+' '+p[0]; }
+
+  function seedMonth(){
+    var f=document.getElementById('fMonth');
+    if(!f.value){ var now=new Date(); f.value=now.toISOString().slice(0,7); }
+    var flt=document.getElementById('fFilterMonth');
+    if(!flt.querySelector('[value]')){ monthsList().forEach(function(m){ var o=document.createElement('option'); o.value=m; o.textContent=monthLabel(m); flt.appendChild(o); }); }
+  }
+
+  function money(n, cls){ var sign = n<0 ? '-' : ''; return '<span class="'+cls+'">'+sign+fmt.format(Math.abs(n))+'</span>'; }
+
+  function render(){
+    load(); seedMonth(); renderCards();
+    var flt=document.getElementById('fFilterMonth').value;
+    var rows = data.filter(function(t){ return !flt || t.m===flt; });
+    var tb=document.getElementById('tbody');
+    if(!rows.length){ tb.innerHTML='<tr><td colspan="6" class="empty">لا توجد عمليات مسجلة بعد.</td></tr>'; }
+    else {
+      tb.innerHTML=rows.map(function(t,i){
+        return '<tr><td>'+t.d+'</td><td>'+(t.type==='income'?'<span style="color:var(--green)">دخل</span>':'<span style="color:#e17055">مصروف</span>')+'</td><td>'+t.desc+'</td><td class="'+(t.type==='income'?'income':'expense')+'">'+fmt.format(t.amount)+'</td><td>'+monthLabel(t.m)+'</td><td><button class="ghost no-print" onclick="delTx('+i+','+t.unique+')" style="padding:5px 10px;background:#ffe0da;color:#a33">حذف</button></td></tr>';
+      }).join('');
+    }
+    var total=rows.reduce(function(s,t){ return s + (t.type==='income'? t.amount : -t.amount); },0);
+    var foot=document.getElementById('footRow');
+    foot.innerHTML='<tr><td colspan="4" style="text-align:start"><b>صافي الفترة</b></td><td colspan="2" style="text-align:start"><b>'+money(total, total<0?'expense':'income')+'</b></td></tr>';
+  }
+
+  function renderCards(){
+    var income=data.filter(function(t){return t.type==='income';}).reduce(function(s,t){return s+t.amount;},0);
+    var exp=data.filter(function(t){return t.type==='expense';}).reduce(function(s,t){return s+t.amount;},0);
+    document.getElementById('cBalance').textContent=fmt.format(income-exp);
+    document.getElementById('cIncome').textContent=fmt.format(income);
+    document.getElementById('cExpense').textContent=fmt.format(exp);
+    document.getElementById('cCount').textContent=data.length;
+  }
+
+  window.addTx=function(){
+    var type=document.getElementById('fType').value, desc=document.getElementById('fDesc').value.trim();
+    var amount=parseFloat(document.getElementById('fAmount').value);
+    var m=document.getElementById('fMonth').value;
+    if(!desc || !(amount>0) || !m){ alert('أدخل الوصف والمبلغ والشهر'); return; }
+    data.push({unique:Math.floor(Math.random()*1e9), type:type, desc:desc, amount:amount, m:m, d:new Date().toLocaleDateString('ar')});
+    save(); document.getElementById('fDesc').value=''; document.getElementById('fAmount').value=''; render();
+  };
+  window.delTx=function(visibleIdx, uniq){
+    var flt=document.getElementById('fFilterMonth').value;
+    var rows=data.filter(function(t){ return !flt || t.m===flt; });
+    if(!rows[visibleIdx]) return;
+    rows[visibleIdx]._del=1;
+    var idx=data.findIndex(function(t){ return t.unique===uniq; });
+    if(idx>-1){ data.splice(idx,1); save(); render(); }
+  };
+  window.clearAll=function(){ if(confirm('حذف كل العمليات؟')){ data=[]; save(); render(); } };
+  window.exportCSV=function(){
+    var lines=['التاريخ,النوع,الوصف,المبلغ,الشهر'];
+    data.forEach(function(t){ lines.push([t.d,t.type==='income'?'دخل':'مصروف',t.desc,t.amount,t.m].join(',')); });
+    var blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='دفتر-المال.csv'; a.click();
+  };
+  render();
+})();
+</script>
+</body>
+</html>
