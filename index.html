@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>متجر الرقمي | منتجات رقمية جاهزة</title>
+<meta name="description" content="متجرك المتخصص لبيع المنتجات الرقمية الجاهزة: قوالب، أدوات، دليلات وأكثر.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app-loading" class="loading-screen">
+  <div class="spinner"></div>
+  <p>جار التحميل...</p>
+</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <div class="logo" onclick="navigate('home')">
+      <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+      <div class="logo-text">
+        <h1>متجر <span id="siteNameLogo">الرقمي</span></h1>
+        <small id="siteTaglineLogo">منتجات رقمية جاهزة للاستخدام الفوري</small>
+      </div>
+    </div>
+    <nav class="main-nav" id="mainNav">
+      <a href="#" onclick="navigate('home'); return false;" class="nav-link active" data-nav="home">الرئيسية</a>
+      <a href="#" onclick="navigate('store'); return false;" class="nav-link" data-nav="store">المتجر</a>
+      <a href="#" onclick="navigate('stats'); return false;" class="nav-link" data-nav="stats">إحصائياتي</a>
+    </nav>
+    <div class="header-actions">
+      <button class="cart-btn" onclick="toggleCart()" aria-label="سلة المشتريات">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="admin-btn" onclick="navigate('admin')" aria-label="لوحة التحكم">
+        <i class="fa-solid fa-user-gear"></i>
+      </button>
+      <button class="menu-toggle" id="menuToggle" onclick="toggleMobileNav()" aria-label="القائمة">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ============ HOME PAGE ============ -->
+  <section id="page-home" class="page">
+    <div class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge"><i class="fa-solid fa-rocket"></i> تسليم فوري تلقائي</div>
+          <h1 class="hero-title">اشترِ منتجك الرقمي <span>اليوم</span> واحصل عليه <span>فوراً</span></h1>
+          <p class="hero-subtitle" id="heroSubtitle">قوالب وأدوات ودليلات جاهزة بعملية شراء واحدة — ادفع واحصل على المنتج مباشرة بدون انتظار.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn btn-primary btn-lg" onclick="navigate('store'); return false;">تصفح المنتجات <i class="fa-solid fa-arrow-left"></i></a>
+            <a href="#" class="btn btn-ghost btn-lg" onclick="navigate('stats'); return false;">شاهد طريقة الربح <i class="fa-solid fa-chart-line"></i></a>
+          </div>
+          <div class="hero-stats">
+            <div><strong id="heroProdCount">0</strong><span>منتج</span></div>
+            <div><strong id="heroCatCount">0</strong><span>تصنيف</span></div>
+            <div><strong>24/7</strong><span>توصيل فوري</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div class="section-head">
+        <h2>منتجات مختارة</h2>
+        <a href="#" onclick="navigate('store'); return false;">عرض الكل <i class="fa-solid fa-arrow-left"></i></a>
+      </div>
+      <div id="homeProducts" class="products-grid"></div>
+    </div>
+
+    <div class="container section">
+      <div class="features">
+        <div class="feature-card">
+          <i class="fa-solid fa-bolt"></i>
+          <h3>تسليم فوري</h3>
+          <p>بعد إتمام الدفع يصلك المنتج مباشرة على بريدك الإلكتروني، بلا انتظار.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-shield-halved"></i>
+          <h3>دفع آمن</h3>
+          <p>بوابات دفع معتمدة تحمي بياناتك، وأسعار محدثة بشكل دائم.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-star"></i>
+          <h3>جودة مضمونة</h3>
+          <p>كل منتج يمر بفحص جودة ويدعمك فريقنا عند أي مشكلة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STORE PAGE ============ -->
+  <section id="page-store" class="page" style="display:none">
+    <div class="container section">
+      <div class="page-title">
+        <h2>المتجر</h2>
+        <p>اختر المنتج وأضفه إلى السلة ثم أكمل الدفع.</p>
+      </div>
+
+      <div class="store-toolbar">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="ابحث عن منتج..." oninput="filterProducts()">
+        </div>
+        <select id="categoryFilter" class="category-filter" onchange="filterProducts()">
+          <option value="">كل التصنيفات</option>
+        </select>
+        <select id="sortFilter" class="category-filter" onchange="filterProducts()">
+          <option value="featured">الأكثر تميزاً</option>
+          <option value="price-asc">السعر: من الأقل</option>
+          <option value="price-desc">السعر: من الأعلى</option>
+          <option value="newest">الأحدث</option>
+        </select>
+      </div>
+
+      <div id="storeProducts" class="products-grid"></div>
+      <div id="noResults" class="no-results" style="display:none">
+        <i class="fa-solid fa-box-open"></i>
+        <p>لا توجد منتجات مطابقة لبحثك.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS PAGE (owner revenue) ============ -->
+  <section id="page-stats" class="page" style="display:none">
+    <div class="container section">
+      <div class="page-title">
+        <h2>إحصائياتي</h2>
+        <p>تابع عوائد متجرك ومبيعاتك من هنا.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+          <div class="stat-num" id="statRevenue">0</div>
+          <div class="stat-label">إجمالي العوائد</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+          <div class="stat-num" id="statOrders">0</div>
+          <div class="stat-label">عدد الطلبات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-cube"></i></div>
+          <div class="stat-num" id="statProducts">0</div>
+          <div class="stat-label">المنتجات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-num" id="statCustomers">0</div>
+          <div class="stat-label">عملاء</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>المبيعات حسب المنتج</h3>
+        <div id="productSalesChart" class="sales-chart"></div>
+      </div>
+
+      <div class="table-card">
+        <h3>آخر الطلبات</h3>
+        <div class="table-wrap">
+          <table id="ordersTable">
+            <thead>
+              <tr><th>#</th><th>التاريخ</th><th>المنتج</th><th>الكمية</th><th>المبلغ</th><th>الحالة</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ADMIN PAGE ============ -->
+  <section id="page-admin" class="page" style="display:none">
+    <div id="adminLogin" class="container section">
+      <div class="login-card">
+        <i class="fa-solid fa-user-gear"></i>
+        <h2>لوحة التحكم</h2>
+        <p>أدخل رمز الحماية للوصول إلى إدارة المتجر.</p>
+        <form onsubmit="adminLogin(event)">
+          <input type="password" id="adminPinInput" placeholder="رمز الحماية" autocomplete="off">
+          <button type="submit" class="btn btn-primary btn-block">دخول</button>
+        </form>
+        <button class="btn btn-ghost btn-block" onclick="useDefaultPin()">استخدام الرمز الافتراضي</button>
+      </div>
+    </div>
+
+    <div id="adminPanel" class="container section" style="display:none">
+      <div class="admin-head">
+        <h2>لوحة تحكم المتجر</h2>
+        <button class="btn btn-danger btn-sm" onclick="adminLogout()"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="products" onclick="switchAdminTab('products')"><i class="fa-solid fa-cube"></i> المنتجات</button>
+        <button class="tab-btn" data-tab="orders" onclick="switchAdminTab('orders')"><i class="fa-solid fa-receipt"></i> الطلبات</button>
+        <button class="tab-btn" data-tab="settings" onclick="switchAdminTab('settings')"><i class="fa-solid fa-gear"></i> الإعدادات</button>
+        <button class="tab-btn" data-tab="guide" onclick="switchAdminTab('guide')"><i class="fa-solid fa-circle-info"></i> دليل الربح</button>
+      </div>
+
+      <!-- Products tab -->
+      <div id="tab-products" class="admin-tab-content">
+        <div class="admin-actions">
+          <button class="btn btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> منتج جديد</button>
+        </div>
+        <div class="admin-products-list" id="adminProductsList"></div>
+      </div>
+
+      <!-- Orders tab -->
+      <div id="tab-orders" class="admin-tab-content" style="display:none">
+        <div class="admin-actions">
+          <button class="btn btn-ghost" onclick="exportOrdersCSV()"><i class="fa-solid fa-file-csv"></i> تصدير CSV</button>
+          <button class="btn btn-ghost" onclick="clearOrders()"><i class="fa-solid fa-trash-can"></i> مسح الطلبات</button>
+        </div>
+        <div class="table-wrap">
+          <table id="adminOrdersTable">
+            <thead><tr><th>#</th><th>التاريخ</th><th>العميل</th><th>المنتج</th><th>الكمية</th><th>المبلغ</th><th>الحالة</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings tab -->
+      <div id="tab-settings" class="admin-tab-content" style="display:none">
+        <form id="settingsForm" class="settings-form">
+          <h3>إعدادات المتجر</h3>
+          <div class="form-row">
+            <label>اسم المتجر</label>
+            <input type="text" id="setStoreName" placeholder="متجر الرقمي">
+          </div>
+          <div class="form-row">
+            <label>الشعار / الوصف القصير</label>
+            <input type="text" id="setTagline" placeholder="منتجات رقمية جاهزة للاستخدام الفوري">
+          </div>
+          <div class="form-row">
+            <label>نص الواجهة الرئيسية</label>
+            <input type="text" id="setHeroSub" placeholder="جملة تسويقية جذابة تظهر في الصفحة الرئيسية">
+          </div>
+          <div class="form-row">
+            <label>العملة</label>
+            <select id="setCurrency">
+              <option value="$">دولار $</option>
+              <option value="€">يورو €</option>
+              <option value="د.أ">دينار أردني</option>
+              <option value="ل.س">ليرة سورية</option>
+              <option value="ج.م">جنيه مصري</option>
+              <option value="د.إ">درهم إماراتي</option>
+              <option value="ر.س">ريال سعودي</option>
+              <option value="د.ك">دينار كويتي</option>
+              <option value="ب.د">دينار بحريني</option>
+              <option value="ر.ق">ريال قطري</option>
+              <option value="ر.ع">ريال عماني</option>
+              <option value="₪">شيكل</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>رقم واتساب التوصيل اليدوي (اختياري)</label>
+            <input type="text" id="setWhatsapp" placeholder="+9627XXXXXXXX — يستقبل إشعارات الطلبات">
+          </div>
+          <div class="form-row">
+            <label>رمز الحماية (تغيير كلمة سر لوحة التحكم)</label>
+            <input type="text" id="setAdminPin" placeholder="رمز جديد (استخدم أرقام أو حروف)">
+          </div>
+          <div class="form-row">
+            <label>رابط صفحة الدفع الخاص بك (Stripe Payment Link)</label>
+            <input type="text" id="setPaymentLink" placeholder="https://buy.stripe.com/... — يُفتح عند إتمام الطلب">
+          </div>
+          <button type="submit" class="btn btn-primary">حفظ الإعدادات</button>
+        </form>
+      </div>
+
+      <!-- Guide tab -->
+      <div id="tab-guide" class="admin-tab-content" style="display:none">
+        <div class="guide-box">
+          <h3><i class="fa-solid fa-money-bill-trend-up"></i> كيف تحقق دخل من متجرك الرقمي</h3>
+          <ol>
+            <li><strong>اضبط المتجر:</strong> غيّر اسم المتجر والعملة وحتى رمز الحماية من تبويب «الإعدادات».</li>
+            <li><strong>أضف منتجات:</strong> من تبويب «المنتجات» أضف منتجاً رقمياً (قالب، دليل، ستور، بوت...) مع رابط بيعه.</li>
+            <li><strong>فعّل استلام الأموال:</strong> أنشئ <em>Stripe Payment Link</em> لبضعة دقائق مجاناً من <code>stripe.com</code> (أو أي بوابة دفع) وضعه في إعدادات الدفع أو داخل كل منتج.</li>
+            <li><strong>أو استقبل عبر واتساب:</strong> ضع رقمك في الإعدادات ليصلك طلب كل عميل مباشرة وتسلّمه بنفسك.</li>
+            <li><strong>انشر المتجر:</strong> ارفع المجلد على GitHub Pages أو Vercel مجاناً وانشر رابطك على وسائل التواصل.</li>
+          </ol>
+          <div class="guide-note">
+            <i class="fa-solid fa-lightbulb"></i>
+            أفضل المنتجات الرقمية للبداية: قوالب سيرة ذاتية، تغطيات سوشيال ميديا، باقات تفعيل، ملفات جاهزة، بوتات تيليجرام، ودورات مصغرة.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product modal -->
+    <div id="productModal" class="modal-overlay" style="display:none">
+      <div class="modal">
+        <div class="modal-head">
+          <h3 id="productModalTitle">منتج جديد</h3>
+          <button class="modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="productForm" class="product-form" onsubmit="saveProduct(event)">
+          <input type="hidden" id="pfId">
+          <div class="form-row">
+            <label>اسم المنتج *</label>
+            <input type="text" id="pfName" required placeholder="مثال: قالب سيرة ذاتية احترافي">
+          </div>
+          <div class="form-row">
+            <label>الوصف</label>
+            <textarea id="pfDesc" rows="3" placeholder="وصف موجز مقنع للمنتج"></textarea>
+          </div>
+          <div class="form-row">
+            <label>السعر</label>
+            <input type="number" id="pfPrice" min="0" step="0.01" value="0" required>
+          </div>
+          <div class="form-row">
+            <label>السعر قبل الخصم (اختياري — يظهر كسعر مخفوض)</label>
+            <input type="number" id="pfOldPrice" min="0" step="0.01" placeholder="اتركه فارغاً إن لا يوجد">
+          </div>
+          <div class="form-row">
+            <label>التصنيف</label>
+            <input type="text" id="pfCategory" placeholder="قوالب، أدوات، دليلات...">
+          </div>
+          <div class="form-row">
+            <label>صورة المنتج — رابط أو ارفع صورة</label>
+            <input type="text" id="pfImageUrl" placeholder="https://... أو اتركه فارغاً لاستخدام الأيقونة">
+            <input type="file" id="pfImageFile" accept="image/*" onchange="readImage(this)">
+          </div>
+          <div class="form-row">
+            <label>لون التمييز (اختياري)</label>
+            <input type="color" id="pfColor" value="#6c5ce7">
+          </div>
+          <div class="form-row">
+            <label>رابط الدفع لهذا المنتج (Stripe/PayPal)</label>
+            <input type="text" id="pfPayLink" placeholder="اتركه فارغاً لاستخدام رابط الدفع العام">
+          </div>
+          <div class="form-row-check">
+            <label><input type="checkbox" id="pfFeatured" checked> منتج مميز (يظهر في الرئيسية)</label>
+            <label><input type="checkbox" id="pfActive" checked> متاح للبيع</label>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-danger" id="pfDeleteBtn" onclick="deleteCurrentProduct()"><i class="fa-solid fa-trash-can"></i> حذف</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Preview modal -->
+    <div id="previewModal" class="modal-overlay" style="display:none" onclick="closePreview()">
+      <div class="modal product-preview" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closePreview()"><i class="fa-solid fa-xmark"></i></button>
+        <div id="previewBody"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p id="footerName">— متجر المنتجات الرقمية —</p>
+    <small>جميع الحقوق محفوظة © <span id="footerYear"></span></small>
+  </div>
+</footer>
+
+<!-- ============ CART DRAWER ============ -->
+<div id="cartOverlay" class="cart-overlay" onclick="closeCart()"></div>
+<aside id="cartDrawer" class="cart-drawer">
+  <div class="cart-head">
+    <h3><i class="fa-solid fa-cart-shopping"></i> سلة المشتريات</h3>
+    <button onclick="closeCart()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div id="cartItems" class="cart-items"></div>
+  <div class="cart-foot">
+    <div class="cart-total">
+      <span>الإجمالي</span>
+      <strong id="cartTotal">0</strong>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="checkout()">
+      <i class="fa-solid fa-credit-card"></i> إتمام الطلب
+    </button>
+    <small class="cart-note"><i class="fa-solid fa-info-circle"></i> بعد إتمام الدفع يصلك المنتج فوراً عبر بريدك أو واتساب.</small>
+  </div>
+</aside>
+
+<!-- ============ CHECKOUT MODAL ============ -->
+<div id="checkoutModal" class="modal-overlay" style="display:none">
+  <div class="modal checkout-modal">
+    <div class="modal-head">
+      <h3>إتمام الطلب</h3>
+      <button class="modal-close" onclick="closeCheckout()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="checkoutForm" onsubmit="completeOrder(event)">
+      <div class="form-row">
+        <label>اسمك الكامل *</label>
+        <input type="text" id="coName" required placeholder="اكتب اسمك">
+      </div>
+      <div class="form-row">
+        <label>بريدك الإلكتروني *</label>
+        <input type="email" id="coEmail" required placeholder="يُرسل المنتج إلى هذا البريد">
+      </div>
+      <div class="form-row">
+        <label>رقم واتساب (اختياري — لتسليم أسهل)</label>
+        <input type="tel" id="coPhone" placeholder="+962...">
+      </div>
+      <div id="checkoutItems" class="checkout-items"></div>
+      <div class="cart-total checkout-total">
+        <span>الإجمالي</span>
+        <strong id="checkoutTotal">0</strong>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">
+        <i class="fa-solid fa-shield-halved"></i> ادفع الآن
+      </button>
+      <small class="cart-note">الدفع يتم عبر بوابة دفع آمنة. سيُعاد توجيهك إلى صفحة الدفع فوراً.</small>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
