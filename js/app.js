@@ -339,8 +339,12 @@ function showToast(msg, type) {
 function showSuccessModal(order, fileUrl) {
   const s = getSettings();
   const itemsList = order.items.map(it => `<li>${escapeHTML(it.product)} × ${it.qty}</li>`).join('');
-  const fileBlock = fileUrl
-    ? `<a class="btn btn-primary" href="${fileUrl}" target="_blank" rel="noopener"><i class="fa-solid fa-download"></i> تحميل منتجك الآن</a>`
+  const dlList = order.items.map(it => {
+    const p = getProducts().find(x => x.name === it.product);
+    return p && p.fileUrl ? `<a class="btn btn-primary btn-block" style="margin-bottom:8px" href="${p.fileUrl}" target="_blank" rel="noopener"><i class="fa-solid fa-download"></i> تحميل ${escapeHTML(p.name)} الآن</a>` : '';
+  }).filter(Boolean).join('');
+  const fileBlock = dlList
+    ? `<div class="success-dl">${dlList}</div>`
     : '<p class="success-note">استلمنا طلبك، سيصلك المنتج على بريدك الإلكتروني خلال دقائق.</p>';
   document.getElementById('successBody').innerHTML = `
     <div class="success-check"><i class="fa-solid fa-check"></i></div>

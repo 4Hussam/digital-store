@@ -1,6 +1,6 @@
 const STORE_KEYS = {
-  products: 'ds_products_v1',
-  settings: 'ds_settings_v1',
+  products: 'ds_products_v3',
+  settings: 'ds_settings_v3',
   orders: 'ds_orders_v1',
   cart: 'ds_cart_v1',
   adminSession: 'ds_admin_session_v1'
