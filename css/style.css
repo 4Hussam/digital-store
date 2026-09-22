@@ -333,12 +333,13 @@ tbody tr:hover { background:var(--bg3); }
 .cart-overlay { position:fixed; inset:0; background:rgba(5,8,15,.6); z-index:400; opacity:0; pointer-events:none; transition:opacity .3s; }
 .cart-overlay.open { opacity:1; pointer-events:auto; }
 .cart-drawer {
-  position:fixed; inset-block:0; inset-inline-end:0; width:min(400px,92vw);
+  position:fixed; top:0; bottom:0; inset-inline-start:auto; right:0;
+  width:min(400px,92vw);
   background:var(--card2); border-inline-start:1px solid var(--border);
-  z-index:401; transform:translateX(100%);
+  z-index:401; transform:translateX(100%); visibility:hidden;
+  transition:transform .3s cubic-bezier(.4,0,.2,1), visibility 0s .3s;
 }
-html[dir="rtl"] .cart-drawer { transform:translateX(130%); }
-.cart-drawer.open { transform:translateX(0) !important; transition:transform .3s cubic-bezier(.4,0,.2,1); }
+.cart-drawer.open { transform:translateX(0); visibility:visible; transition:transform .3s cubic-bezier(.4,0,.2,1); }
 .cart-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--border); }
 .cart-head h3 { font-size:17px; }
 .cart-head button { background:none; border:none; color:var(--muted); font-size:18px; }
