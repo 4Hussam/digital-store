@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سيرة ذاتية احترافية</title>
+<title>سيرة ذاتية احترافية — قابل للتعديل</title>
 <style>
   :root { --main:#6c5ce7; --dark:#171b2b; --muted:#5b6478; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Segoe UI', Tahoma, Arial, sans-serif; background:#eef0f5; color:#222; line-height:1.6; }
+  body { font-family:'Segoe UI', Tahoma, Arial, sans-serif; background:#eef0f5; color:#222; line-height:1.6; padding-bottom:70px; }
   .page { max-width:900px; margin:28px auto; background:#fff; display:grid; grid-template-columns:280px 1fr; box-shadow:0 10px 40px rgba(0,0,0,.15); }
   .side { background:var(--dark); color:#fff; padding:34px 24px; }
   .side h1 { font-size:26px; margin-bottom:4px; }
@@ -26,16 +26,38 @@
   .entry .top b { font-size:15px; }
   .entry .top span { font-size:12px; color:var(--muted); }
   .entry p { font-size:13px; color:#444; margin-top:3px; }
-  .avatar { width:130px; height:130px; border-radius:50%; margin:0 auto 20px; background:linear-gradient(135deg,var(--main),#8e7bff); display:grid; place-items:center; font-size:44px; font-weight:800; color:#fff; }
-  .print-tip { position:fixed; bottom:14px; inset-inline-end:14px; background:var(--main); color:#fff; padding:10px 18px; border-radius:10px; font-size:13px; box-shadow:0 6px 18px rgba(0,0,0,.25); z-index:9; }
-  @media print { body { background:#fff; } .page { box-shadow:none; margin:0; width:100%; } .print-tip { display:none; } }
+  .avatar { width:130px; height:130px; border-radius:50%; margin:0 auto 20px; background:linear-gradient(135deg,var(--main),#8e7bff); display:grid; place-items:center; font-size:44px; font-weight:800; color:#fff; overflow:hidden; }
+
+  /* edit toolbar */
+  .toolbar { position:fixed; bottom:0; inset-inline:0; background:rgba(20,24,42,.96); padding:10px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; z-index:999; border-top:1px solid #2c3350; }
+  .toolbar button { padding:9px 18px; border-radius:9px; border:none; font-size:14px; font-family:inherit; font-weight:700; cursor:pointer; }
+  .tb-edit { background:var(--main); color:#fff; }
+  .tb-edit.off { background:#555; }
+  .tb-print { background:var(--main); color:#fff; }
+  .tb-reset { background:#444; color:#fff; }
+  .tb-status { color:#8ef0d0; font-size:13px; align-self:center; padding:0 8px; }
+  .edit-hint { text-align:center; color:var(--muted); font-size:13px; margin-top:14px; }
+
+  /* editable state */
+  [contenteditable="true"] { outline:none; }
+  [contenteditable="true"] *:hover { cursor:text; }
+  body.editing .page { outline:2px dashed var(--main); outline-offset:6px; }
+  ::selection { background:#c3bdf9; }
+
+  @media print { body { background:#fff; padding:0; } .page { box-shadow:none; margin:0; width:100%; outline:none !important; } .toolbar, .edit-hint, .print-tip { display:none !important; } }
   @media (max-width:760px){ .page { grid-template-columns:1fr; } }
 </style>
 </head>
-<body>
-<div class="print-tip">💡 للتصدير PDF: Ctrl+P ثم «حفظ كـ PDF»</div>
+<body class="editing">
 
-<div class="page">
+<div class="toolbar">
+  <button class="tb-edit off" id="btnEdit" onclick="toggleEdit()">📝 وضع التعديل: مفعّل</button>
+  <button class="tb-print" onclick="window.print()">🖨 حفظ / طباعة PDF</button>
+  <button class="tb-reset" onclick="resetCV()">🔄 إعادة ضبط</button>
+  <span class="tb-status" id="saveStatus">محفوظ تلقائياً ✓</span>
+</div>
+
+<div class="page" id="cvPage" contenteditable="true" spellcheck="false">
   <aside class="side">
     <div class="avatar">ا</div>
     <h1>[اسمك الكامل]</h1>
@@ -43,10 +65,10 @@
 
     <h3>معلومات التواصل</h3>
     <ul class="contact">
-      <li><i>📱</i> +962 7X XXX XXXX</li>
-      <li><i>✉️</i> you@email.com</li>
-      <li><i>📍</i> مدينتك، بلدك</li>
-      <li><i>🔗</i> linkedin.com/in/you</li>
+      <li>📱 +962 7X XXX XXXX</li>
+      <li>✉️ you@email.com</li>
+      <li>📍 مدينتك، بلدك</li>
+      <li>🔗 linkedin.com/in/you</li>
     </ul>
 
     <h3>المهارات</h3>
@@ -80,6 +102,11 @@
         <div class="top"><span style="font-weight:600">اسم الشركة</span></div>
         <p>• أبرز إنجاز/مسؤولية أولى. • إنجاز ثانٍ بأرقام محددة كلما أمكن.</p>
       </div>
+      <div class="entry">
+        <div class="top"><b>المسمى الوظيفي</b><span>من سنة — إلى سنة</span></div>
+        <div class="top"><span style="font-weight:600">اسم الشركة</span></div>
+        <p>• أبرز إنجاز/مسؤولية أولى.</p>
+      </div>
     </div>
 
     <div class="section">
@@ -109,5 +136,51 @@
     </div>
   </main>
 </div>
+
+<p class="edit-hint">💡 انقر على أي نص وعدّله مباشرة. أعمدة السيرة الذاتية كلها قابلة للتعديل، ثم اضغط «حفظ / طباعة PDF».</p>
+
+<script>
+(function(){
+  var KEY = 'cv-template-content-v1';
+  var page = document.getElementById('cvPage');
+  var status = document.getElementById('saveStatus');
+  var btnEdit = document.getElementById('btnEdit');
+  var saveTimer;
+
+  function load(){
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch(e){}
+    if(saved){ page.innerHTML = saved; status.textContent = 'تم تحميل تعديلاتك السابقة ✓'; }
+  }
+
+  function save(){
+    try { localStorage.setItem(KEY, page.innerHTML); status.textContent = 'محفوظ تلقائياً ✓'; }
+    catch(e){ status.textContent = 'تعذّر الحفظ'; }
+  }
+
+  page.addEventListener('input', function(){
+    status.textContent = 'جارٍ الحفظ...';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 500);
+  });
+
+  window.toggleEdit = function(){
+    var on = page.getAttribute('contenteditable') === 'true';
+    page.setAttribute('contenteditable', on ? 'false' : 'true');
+    document.body.classList.toggle('editing', !on);
+    btnEdit.textContent = on ? '📝 وضع التعديل: مطفأ' : '📝 وضع التعديل: مفعّل';
+    btnEdit.classList.toggle('off', !on);
+    if(on) save();
+  };
+
+  window.resetCV = function(){
+    if(!confirm('إعادة القالب إلى حالته الأصلية؟ ستفقد تعديلاتك.')) return;
+    try { localStorage.removeItem(KEY); } catch(e){}
+    location.reload();
+  };
+
+  load();
+})();
+</script>
 </body>
 </html>
