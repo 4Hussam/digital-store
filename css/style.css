@@ -333,7 +333,7 @@ tbody tr:hover { background:var(--bg3); }
 .cart-overlay { position:fixed; inset:0; background:rgba(5,8,15,.6); z-index:400; opacity:0; pointer-events:none; transition:opacity .3s; }
 .cart-overlay.open { opacity:1; pointer-events:auto; }
 .cart-drawer {
-  position:fixed; top:0; bottom:0; inset-inline-start:auto; right:0;
+  position:fixed; top:0; bottom:0; right:0; left:auto;
   width:min(400px,92vw);
   background:var(--card2); border-inline-start:1px solid var(--border);
   z-index:401; transform:translateX(100%); visibility:hidden;
